@@ -1,0 +1,10 @@
+<html>
+<body>
+<h1>
+hello world the time is
+<%= new java.util.Date() %>
+
+
+</h1>
+</body>
+</html>
