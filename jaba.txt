@@ -1,0 +1,338 @@
+////////////////////// Socket /////////////////////
+// CLIENT SIDE
+
+package socket;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.*;
+public class GreetingClient {
+	public static void main(String [] args){
+		String serverName = args[0];
+		int port = Integer.parseInt(args[1]);
+		try{
+			System.out.println("Conecting to "+ serverName+" on port"+ port);
+			Socket client = new Socket (serverName,port);
+			System.out.println("just connected to "+client.getRemoteSocketAddress());
+			OutputStream outToServer = client.getOutputStream();
+			DataOutputStream out = new DataOutputStream(outToServer);
+			out.writeUTF("Hello from"+ client.getLocalSocketAddress());
+			InputStream inFromServer = client.getInputStream();
+			DataInputStream in =  new DataInputStream(inFromServer);
+			System.out.println("Server says "+in.readUTF());
+			client.close();
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	
+	}
+}
+ 
+
+
+
+//SERVER SIDE
+
+
+package socket;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
+
+public class GreetingServer extends Thread{
+	private ServerSocket serverSocket;
+	
+	public GreetingServer (int port)throws IOException{
+		serverSocket = new ServerSocket(port);
+		serverSocket.setSoTimeout(1000000);
+	}
+	
+	public void run(){
+		while(true){
+			try{
+				System.out.println("Wating for client on port "+serverSocket.getLocalPort()+".....");
+				Socket server = serverSocket.accept();
+				
+				System.out.println("Just connected to "+server.getRemoteSocketAddress());
+				DataInputStream in = new DataInputStream(server.getInputStream());
+				System.out.println(in.readUTF());
+				DataOutputStream out = new DataOutputStream(server.getOutputStream());
+				out.writeUTF("thanku for connecting to "+server.getLocalSocketAddress()+"\nGoodBye!");
+				server.close();
+			}catch(SocketTimeoutException a){
+				System.out.println("Socket time out");
+				break;
+			}
+			catch(IOException e){
+				e.printStackTrace();
+				break;
+			}
+		}
+	}
+
+	public static void main(String[] args) {
+		int port = Integer.parseInt(args[0]);
+		try{
+			Thread t = new GreetingServer(port);
+			t.start();
+		}catch(IOException e)
+		{
+			e.printStackTrace();
+
+		}
+	}
+	
+}
+
+
+//////////////////////////////////// servlet program ////////////////////////////////////
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+@WebServlet("/MyServlet")
+public class MyServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+    /**
+     * Default constructor. 
+     */
+    public MyServlet() {
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */	
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+		out.print("<html><body>");
+		out.print("<h1>hello world</h1>");
+		out.print("</body></html>");	
+		}
+}
+	
+
+
+
+////////////// implement applet set color and draw an oval /////////////////////
+
+import java.applet.Applet;
+import java.awt.Graphics;
+import java.awt.Color;
+
+public class MyApplet extends Applet {
+    public void paint(Graphics g) {
+        g.drawString("Hello, World!", 20, 20);
+	g.setcolor(Color.red); 
+	g.fillOval(20,20,60,60); 	
+
+    }
+}
+
+
+
+/////////////////////// Design a GUI in Java Swings:///////////////////////////
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class MySwingGUI {
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Swing GUI Example");
+        JPanel panel = new JPanel();
+        JButton button = new JButton("Click Me");
+        
+        panel.add(button);
+        frame.add(panel);
+        
+        frame.setSize(300, 200);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}
+
+//////////////////////////// Swing chat frame ////////////////////////
+
+//////////////(replace MyApp with your class name )///////////////////////
+
+import java.awt.BorderLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.UIManager;
+
+// import javafx.scene.control.ToggleButton;
+
+public class MyApp {
+public static void main(String[] args)
+{
+	try
+	{
+		UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		
+	}
+	catch (Exception e)
+	{
+		e.printStackTrace();
+	}
+	
+	JFrame frame = new JFrame("Chat Frame");
+	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	frame.setSize(600,600);
+	
+	JMenuBar menuBar = new JMenuBar();
+	JMenu m1= new JMenu("FILE");
+	JMenu m2= new JMenu("HELP");
+	menuBar.add(m1);
+	menuBar.add(m2);
+	JMenuItem m11= new JMenuItem("Open");
+	JMenuItem m12= new JMenuItem("Close");
+	m1.add(m11);
+	m1.add(m12);
+	
+	JTextArea ta = new JTextArea();
+	JScrollPane scroll = new JScrollPane(ta);
+	scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+	scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+	
+	
+	JPanel panel = new JPanel();
+	JLabel lable = new JLabel("Enter Text");
+	JTextField textField = new JTextField(10);
+	JButton sendButton = new JButton("Send");
+	JButton resetButton = new JButton("Reset");
+	
+	panel.add(lable);
+	panel.add(textField);
+	panel.add(sendButton);
+	panel.add(resetButton);
+	
+	
+	JPanel buttonPanel = new JPanel();
+	ButtonGroup buttonGroup = new ButtonGroup();
+	JRadioButton secYearButton = new JRadioButton("II Year");
+	JRadioButton thirdYearButton = new JRadioButton("III Year");
+	JRadioButton fourthYearButton = new JRadioButton("IV Year");
+	
+	buttonGroup.add(secYearButton);
+	buttonGroup.add(thirdYearButton);
+	buttonGroup.add(fourthYearButton);
+	buttonPanel.add(secYearButton);
+	buttonPanel.add(thirdYearButton);
+	buttonPanel.add(fourthYearButton);
+	buttonPanel.add(panel);
+	
+	
+	JPanel cbPanel = new JPanel();
+	JCheckBox cb1 = new JCheckBox("C++");
+	cb1.setBounds(100, 150, 50, 50);
+	JCheckBox cb2 = new JCheckBox("Java");
+	cb1.setBounds(100, 150, 50, 50);
+	cbPanel.add(cb1);
+	cbPanel.add(cb2);
+	
+	JToggleButton toggleButton = new JToggleButton("TextAreaSet");
+	ItemListener itemListener = new ItemListener() 
+	{
+		
+		@Override
+		public void itemStateChanged(ItemEvent event)
+		{
+			// TODO Auto-generated method stub
+			int state = event.getStateChange();
+			if(state==ItemEvent.SELECTED)
+			{
+				ta.setEnabled(false);
+			}
+			else 
+			{
+				ta.setEnabled(true);
+			}
+			
+		}
+	};
+	toggleButton.addItemListener(itemListener);
+	cbPanel.add(toggleButton);
+	
+	
+	frame.getContentPane().add(BorderLayout.PAGE_START,menuBar);
+	frame.getContentPane().add(BorderLayout.BEFORE_LINE_BEGINS,cbPanel);
+	frame.getContentPane().add(BorderLayout.CENTER,scroll);
+	frame.getContentPane().add(BorderLayout.SOUTH,buttonPanel);
+	frame.setVisible(true);
+}
+}
+
+///////////////////////////////// JDBC //////////////////////////////////////
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+public class Digitalbook {
+public static void main(String[] args)
+{
+	try(
+			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/ebookshop","root","root");
+			Statement stmt = conn.createStatement();			
+			)
+	{
+		String strSelect = "Select title ,price,qty from books";
+		System.out.println("the SQL statement is : " + strSelect + "\n");
+		ResultSet rset = stmt.executeQuery(strSelect);
+		
+		System.out.println("the recodr select are:");
+		int rowCount = 0;
+		while(rset.next()) {
+			String title = rset.getString("title");
+			double price  = rset.getDouble("price");
+			int qty = rset.getInt("qty");
+			System.out.println(title + "," + price +  "," +qty );
+			++rowCount;
+			}
+			System.out.println("total number of records = "+ rowCount);
+	}
+	catch(SQLException ex)
+	{
+		ex.printStackTrace();
+			
+			
+			
+		}
+		
+		
+		
+	}
+}
